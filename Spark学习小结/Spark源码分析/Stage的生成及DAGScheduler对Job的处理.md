@@ -337,7 +337,7 @@ SparkContext.runJob -> DAGScheduler.runJob -> DAGScheduler.submitJob -> 发送Jo
 
 >可能看到这里，还是觉得DAG比较抽象，那么到底在DAGScheduler代码的什么地方构建了这个有向无环图（DAG）呢？
 >  
-实际上这个图就是又各个stage的宽依赖关系构成的。实际上代码中实际存在的只有RDD以及RDD之间的依赖关系，而stage以及DAG都是逻辑概念，当我们遍历RDD及其依赖关系构成的图时，窄依赖联系的RDD处于同一个stage中，而宽依赖将一组组的RDD划分成了不同的stage，将这些stage看做是节点，stage之间的宽依赖关系看做是边，则DAG便构建了出来
+实际上这个图就是又各个stage的宽依赖关系构成的。实际上代码中实际存在的只有RDD以及RDD之间的依赖关系，而stage以及DAG都是逻辑概念，当我们遍历RDD及其依赖关系构成的图时，窄依赖联系的RDD处于同一个stage中，而宽依赖将一组组窄依赖联系的RDD划分成了不同的stage，将这些stage看做是节点，stage之间的宽依赖关系看做是边，则DAG便构建了出来
 
 走完上述流程之后，可以借用下面这张图来整理思路（图片来源：[http://www.jianshu.com/p/4711f72f0b07](http://www.jianshu.com/p/4711f72f0b07)）
 
