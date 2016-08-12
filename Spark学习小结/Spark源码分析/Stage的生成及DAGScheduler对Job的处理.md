@@ -1,9 +1,8 @@
 ##Stage的生成以及DAGScheduler对Job的处理
 >所有代码均来自spark 2.0.0-preview源码
 
-分析Job的提交源码之前，先简单回顾一下DAGScheduler的作用（对于DAGScheduler的功能性介绍参见另一篇笔记[Spark基础与运行架构分析](../Spark基础及运行架构分析)）
+分析Job的提交源码之前，先简单回顾一下DAGScheduler的作用，DAGScheduler是一个比较高层的调度器，主要面向stage的调度。它会为每一个job计算出stage的DAG(Directed Acyclic Graph)（对于DAGScheduler的功能性介绍参见另一篇笔记[Spark基础与运行架构分析](../Spark基础及运行架构分析)）
 
-DAGScheduler是一个比较高层的调度器，主要面向stage的调度。它会为每一个job计算出stage的DAG(Directed Acyclic Graph)
 
 ####DAGScheduler主要功能：  
 *1. 接受job提交*  -->runJob  
@@ -337,7 +336,7 @@ SparkContext.runJob -> DAGScheduler.runJob -> DAGScheduler.submitJob -> 发送Jo
 
 >可能看到这里，还是觉得DAG比较抽象，那么到底在DAGScheduler代码的什么地方构建了这个有向无环图（DAG）呢？
 >  
-实际上这个图就是又各个stage的宽依赖关系构成的。实际上代码中实际存在的只有RDD以及RDD之间的依赖关系，而stage以及DAG都是逻辑概念，当我们遍历RDD及其依赖关系构成的图时，窄依赖联系的RDD处于同一个stage中，而宽依赖将一组组窄依赖联系的RDD划分成了不同的stage，将这些stage看做是节点，stage之间的宽依赖关系看做是边，则DAG便构建了出来
+实际上DAG就是由各个stage的宽依赖关系构成的。代码中实际存在的只有RDD以及RDD之间的依赖关系，而stage以及DAG都是逻辑概念，当我们遍历RDD及其依赖关系构成的图时，窄依赖联系的RDD处于同一个stage中，而宽依赖将一组组窄依赖联系的RDD划分成了不同的stage，将这些stage看做是节点，stage之间的宽依赖关系看做是边，则DAG便构建了出来（关于RDD和DAG的构建可以参考另一篇笔记[RDD与DAG的构建](../Spark专题问题分析/RDD与DAG构建)）
 
 走完上述流程之后，可以借用下面这张图来整理思路（图片来源：[http://www.jianshu.com/p/4711f72f0b07](http://www.jianshu.com/p/4711f72f0b07)）
 
